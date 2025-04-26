@@ -16,14 +16,6 @@ public class UserAdapterJPA implements IUserPersistencePort {
     @Override
     public void saveUser(User user) {
         UserEntity userEntity = userEntityMapper.toUserEntity(user);
-        System.out.println("UserEntity.name: " + userEntity.getName());
-        System.out.println("UserEntity.email: " + userEntity.getEmail());
-        System.out.println("UserEntity.dni: " + userEntity.getDni());
-        System.out.println("UserEntity.password: " + userEntity.getPassword());
-        System.out.println("UserEntity.role: " + userEntity.getRole());
-        System.out.println("UserEntity.phone: " + userEntity.getPhoneNumber());
-        System.out.println("UserEntity.dateOfBirth: " + userEntity.getDateOfBirth());
-
         userRepository.save(userEntity);
     }
 

@@ -3,9 +3,11 @@ package com.pragma.user_service.infrastructure.configuration;
 import com.pragma.user_service.application.handler.IUserHandler;
 import com.pragma.user_service.application.handler.impl.UserHandlerImpl;
 import com.pragma.user_service.application.mapper.IUserRequestMapper;
+import com.pragma.user_service.domain.api.IUserRoleServicePort;
 import com.pragma.user_service.domain.api.IUserServicePort;
 import com.pragma.user_service.domain.spi.IRolePersistencePort;
 import com.pragma.user_service.domain.spi.IUserPersistencePort;
+import com.pragma.user_service.domain.usecase.UserRoleUseCase;
 import com.pragma.user_service.domain.usecase.UserUseCase;
 import com.pragma.user_service.infrastructure.out.jpa.adapter.UserAdapterJPA;
 import com.pragma.user_service.infrastructure.out.jpa.adapter.UserRoleAdapterJPA;
@@ -38,8 +40,13 @@ public class BeanConfiguration {
     }
 
     @Bean
+    public IUserRoleServicePort userRoleServicePort() {
+        return new UserRoleUseCase(rolePersistencePort());
+    }
+
+    @Bean
     public IUserServicePort userServicePort() {
-        return new UserUseCase(userPersistencePort(), rolePersistencePort());
+        return new UserUseCase(userPersistencePort(), userRoleServicePort());
     }
 
     @Bean

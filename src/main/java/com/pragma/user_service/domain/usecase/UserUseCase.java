@@ -1,9 +1,9 @@
 package com.pragma.user_service.domain.usecase;
 
+import com.pragma.user_service.domain.api.IUserRoleServicePort;
 import com.pragma.user_service.domain.api.IUserServicePort;
 import com.pragma.user_service.domain.model.User;
 import com.pragma.user_service.domain.model.UserRole;
-import com.pragma.user_service.domain.spi.IRolePersistencePort;
 import com.pragma.user_service.domain.spi.IUserPersistencePort;
 import com.pragma.user_service.domain.util.PasswordEncryptor;
 import com.pragma.user_service.domain.util.constants.UserUseCaseConstants;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 public class UserUseCase implements IUserServicePort {
 
     private final IUserPersistencePort userPersistencePort;
-    private final IRolePersistencePort rolePersistencePort;
+    private final IUserRoleServicePort userRoleServicePort;
 
     private void saveUser(User user, String roleName) {
         UserValidator.validateUserData(user);
@@ -25,7 +25,7 @@ public class UserUseCase implements IUserServicePort {
         if (userPersistencePort.existsByDni(user.getDni())) {
             throw new IllegalArgumentException(UserValidationConstants.DNI_ALREADY_EXISTS);
         }
-        UserRole userRole = rolePersistencePort.getRoleByName(roleName);
+        UserRole userRole = userRoleServicePort.getRoleByName(roleName);
         user.setRole(userRole);
         user.setPassword(PasswordEncryptor.encryptPassword(user.getPassword()));
         userPersistencePort.saveUser(user);

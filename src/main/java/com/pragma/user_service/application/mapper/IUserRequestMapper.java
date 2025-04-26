@@ -5,7 +5,7 @@ import com.pragma.user_service.domain.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", unmappedTargetPolicy = org.mapstruct.ReportingPolicy.IGNORE)
 public interface IUserRequestMapper {
 
     @Mapping(target = "id", ignore = true)

@@ -19,22 +19,19 @@ public class UserRequestDto {
 
     @Schema(
             description = UserRequestConstantsOpenApi.USER_NAME_DESCRIPTION,
-            example = UserRequestConstantsOpenApi.USER_NAME_EXAMPLE,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = UserRequestConstantsOpenApi.USER_NAME_EXAMPLE
     )
     @NotBlank(message = UserRequestConstants.NAME_MUST_MANDATORY)
     private String name;
     @Schema(
             description = UserRequestConstantsOpenApi.USER_LAST_NAME_DESCRIPTION,
-            example = UserRequestConstantsOpenApi.USER_LAST_NAME_EXAMPLE,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = UserRequestConstantsOpenApi.USER_LAST_NAME_EXAMPLE
     )
     @NotBlank(message = UserRequestConstants.LAST_NAME_MUST_MANDATORY)
     private String lastName;
     @Schema(
             description = UserRequestConstantsOpenApi.USER_DNI_DESCRIPTION,
-            example = UserRequestConstantsOpenApi.USER_DNI_EXAMPLE,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = UserRequestConstantsOpenApi.USER_DNI_EXAMPLE
     )
     @NotBlank(message = UserRequestConstants.DNI_MUST_MANDATORY)
     @Pattern(regexp = UserRequestConstants.REGEX_DNI,
@@ -42,32 +39,28 @@ public class UserRequestDto {
     private String dni;
     @Schema(
             description = UserRequestConstantsOpenApi.USER_PHONE_NUMBER_DESCRIPTION,
-            example = UserRequestConstantsOpenApi.USER_PHONE_NUMBER_EXAMPLE,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = UserRequestConstantsOpenApi.USER_PHONE_NUMBER_EXAMPLE
     )
     @NotBlank(message = UserRequestConstants.PHONE_NUMBER_MUST_MANDATORY)
     @Pattern(regexp = UserRequestConstants.REGEX_PHONE_NUMBER)
     private String phoneNumber;
     @Schema(
             description = UserRequestConstantsOpenApi.USER_DATE_OF_BIRTH_DESCRIPTION,
-            example = UserRequestConstantsOpenApi.USER_DATE_OF_BIRTH_EXAMPLE,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = UserRequestConstantsOpenApi.USER_DATE_OF_BIRTH_EXAMPLE
     )
     @NotNull(message = UserRequestConstants.DATE_OF_BIRTH_MUST_MANDATORY)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = UserRequestConstants.DATE_FORMAT)
     private LocalDate dateOfBirth;
     @Schema(
             description = UserRequestConstantsOpenApi.USER_EMAIL_DESCRIPTION,
-            example = UserRequestConstantsOpenApi.USER_EMAIL_EXAMPLE,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = UserRequestConstantsOpenApi.USER_EMAIL_EXAMPLE
     )
     @NotBlank(message = UserRequestConstants.EMAIL_MUST_MANDATORY)
     @Pattern(regexp = UserRequestConstants.REGEX_EMAIL)
     private String email;
     @Schema(
             description = UserRequestConstantsOpenApi.USER_PASSWORD_DESCRIPTION,
-            example = UserRequestConstantsOpenApi.USER_PASSWORD_EXAMPLE,
-            requiredMode = Schema.RequiredMode.REQUIRED
+            example = UserRequestConstantsOpenApi.USER_PASSWORD_EXAMPLE
     )
     @NotBlank(message = UserRequestConstants.PASSWORD_MUST_MANDATORY)
     private String password;
