@@ -43,7 +43,30 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+def coverageExcludes = [
+		'**/dto/.*',
+		'**/spi/.*',
+		'**/api/.*',
+		'**/mappers/.*',
+		'**/repository/.*',
+		'**/*.test',
+		'**/generated/.*',
+]
+
+jacocoTestReport {
+	reports {
+		xml.required = true
+		html.required = true
+	}
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: coverageExcludes)
+		}))
+	}
+}
+
 test {
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
 }
+
