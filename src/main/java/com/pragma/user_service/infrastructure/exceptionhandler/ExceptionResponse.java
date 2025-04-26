@@ -10,8 +10,7 @@ import java.time.LocalDateTime;
 public class ExceptionResponse {
 
     private String message;
-    private int status;
+    private String status;
     private LocalDateTime timestamp;
-
 
 }
