@@ -49,15 +49,23 @@ dependencies {
 }
 
 def coverageExcludes = [
-		'**/dto/.*',
-		'**/spi/.*',
-		'**/api/.*',
-		'**/mappers/.*',
-		'**/repository/.*',
+		'**/dto/**',
+		'**/spi/**',
+		'**/api/**',
+		'**/mappers/**',
+		'**/mapper/**',
+		'**/repository/**',
 		'**/*.test',
-		'**/generated/.*',
-		'**/exception/.*',
-		'**/exceptionhandler/.*',
+		'**/generated/**',
+		'**/exception/**',
+		'**/exceptionhandler/**',
+		'**/out/jpa/mapper/**',
+		'**/infrastructure/exceptionhandler/**',
+		'**/application/mapper/**',
+		'**/application/handler/impl/**',
+		'**/domain/exception/**',
+		'**/infrastructure/documentation/**',
+		'**/UserServiceApplication.*'
 ]
 
 jacocoTestReport {
@@ -76,4 +84,3 @@ test {
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
 }
-
