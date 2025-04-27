@@ -7,6 +7,8 @@ import com.pragma.user_service.infrastructure.out.jpa.mapper.IUserEntityMapper;
 import com.pragma.user_service.infrastructure.out.jpa.repository.IUserRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class UserAdapterJPA implements IUserPersistencePort {
 
@@ -27,5 +29,10 @@ public class UserAdapterJPA implements IUserPersistencePort {
     @Override
     public boolean existsByDni(String dni) {
         return userRepository.existsByDni(dni);
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+        return userEntityMapper.toOptionalUser(userRepository.findById(id));
     }
 }

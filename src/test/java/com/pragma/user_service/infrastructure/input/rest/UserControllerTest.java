@@ -11,8 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class UserControllerTest {
 
@@ -37,6 +36,19 @@ class UserControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNull(response.getBody());
         verify(userHandler).saveOwner(userRequestDto);
+    }
+
+    @Test
+    void isOwner_ShouldReturnOkStatusWithResult() {
+        Long userId = 1L;
+        boolean isOwnerResult = true;
+        when(userHandler.isOwner(userId)).thenReturn(isOwnerResult);
+
+        ResponseEntity<Boolean> response = userController.isOwner(userId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(isOwnerResult, response.getBody());
+        verify(userHandler).isOwner(userId);
     }
 
 }

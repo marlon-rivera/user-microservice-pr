@@ -10,10 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -47,4 +44,19 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(
+            summary = UserControllerConstantsOpenApi.USER_CONTROLLER_IS_OWNER_SUMMARY,
+            description = UserControllerConstantsOpenApi.USER_CONTROLLER_IS_OWNER_DESCRIPTION,
+            tags = {UserControllerConstantsOpenApi.USER_CONTROLLER_TAG},
+            responses = {
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.OK,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_IS_OWNER_RESPONSE_200_DESCRIPTION
+                    )
+            }
+    )
+    @GetMapping("/owner/{id}")
+    public ResponseEntity<Boolean> isOwner(@PathVariable Long id) {
+        return ResponseEntity.ok(userHandler.isOwner(id));
+    }
 }

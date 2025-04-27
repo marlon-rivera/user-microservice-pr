@@ -18,4 +18,9 @@ public class UserHandlerImpl implements IUserHandler {
         User user = userRequestMapper.toUser(userRequestDto);
         userServicePort.saveOwner(user);
     }
+
+    @Override
+    public boolean isOwner(Long userId) {
+        return userServicePort.isOwner(userId);
+    }
 }
