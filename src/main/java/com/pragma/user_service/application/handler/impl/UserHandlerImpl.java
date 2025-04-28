@@ -1,9 +1,11 @@
 package com.pragma.user_service.application.handler.impl;
 
+import com.pragma.user_service.application.dto.request.LoginRequestDto;
 import com.pragma.user_service.application.dto.request.UserRequestDto;
 import com.pragma.user_service.application.handler.IUserHandler;
 import com.pragma.user_service.application.mapper.IUserRequestMapper;
 import com.pragma.user_service.domain.api.IUserServicePort;
+import com.pragma.user_service.domain.model.Auth;
 import com.pragma.user_service.domain.model.User;
 import lombok.RequiredArgsConstructor;
 
@@ -17,5 +19,10 @@ public class UserHandlerImpl implements IUserHandler {
     public void saveOwner(UserRequestDto userRequestDto) {
         User user = userRequestMapper.toUser(userRequestDto);
         userServicePort.saveOwner(user);
+    }
+
+    @Override
+    public Auth login(LoginRequestDto loginRequestDto) {
+        return userServicePort.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
     }
 }
