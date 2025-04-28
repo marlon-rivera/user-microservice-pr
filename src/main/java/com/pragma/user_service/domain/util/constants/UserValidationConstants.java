@@ -27,8 +27,6 @@ public class UserValidationConstants {
     public static final String DATE_FORMAT = "yyyy-MM-dd";
     public static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
     public static final int MINIMUM_AGE = 18;
-
-
-
+    public static final String INVALID_CREDENTIALS = "Invalid credentials";
 
 }

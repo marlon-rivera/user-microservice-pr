@@ -5,6 +5,6 @@ public class UserUseCaseConstants {
     private UserUseCaseConstants() {}
 
 
-    public static final String ROLE_OWNER = "ROLE_OWNER";
+    public static final String ROLE_OWNER = "OWNER";
 
 }

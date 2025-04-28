@@ -1,8 +1,10 @@
 package com.pragma.user_service.infrastructure.input.rest;
 
+import com.pragma.user_service.application.dto.request.LoginRequestDto;
 import com.pragma.user_service.application.dto.request.UserRequestDto;
 import com.pragma.user_service.application.dto.utils.constants.ResponsesCodes;
 import com.pragma.user_service.application.handler.IUserHandler;
+import com.pragma.user_service.domain.model.Auth;
 import com.pragma.user_service.infrastructure.util.constants.openapi.UserControllerConstantsOpenApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -47,6 +49,7 @@ public class UserController {
     @Operation(
             summary = UserControllerConstantsOpenApi.USER_CONTROLLER_IS_OWNER_SUMMARY,
             description = UserControllerConstantsOpenApi.USER_CONTROLLER_IS_OWNER_DESCRIPTION,
+            
             tags = {UserControllerConstantsOpenApi.USER_CONTROLLER_TAG},
             responses = {
                     @ApiResponse(
@@ -58,5 +61,25 @@ public class UserController {
     @GetMapping("/owner/{id}")
     public ResponseEntity<Boolean> isOwner(@PathVariable Long id) {
         return ResponseEntity.ok(userHandler.isOwner(id));
+    }
+      
+    @Operation(
+            summary = UserControllerConstantsOpenApi.USER_CONTROLLER_LOGIN_SUMMARY,
+            description = UserControllerConstantsOpenApi.USER_CONTROLLER_LOGIN_DESCRIPTION,
+            responses = {
+                    @ApiResponse(
+                            responseCode = ResponsesCode.OK
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_LOGIN_RESPONSE_200_DESCRIPTION
+                    ),
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.BAD_REQUEST,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_LOGIN_RESPONSE_400_DESCRIPTION
+                    )
+            }
+    )
+    @PostMapping("/login")
+    public ResponseEntity<Auth> login(@Valid @RequestBody LoginRequestDto loginRequestDto) {
+        Auth auth = userHandler.login(loginRequestDto);
+        return ResponseEntity.ok(auth);
     }
 }

@@ -13,5 +13,9 @@ public class UserControllerConstantsOpenApi {
     public static final String USER_CONTROLLER_IS_OWNER_SUMMARY = "Check if user is owner";
     public static final String USER_CONTROLLER_IS_OWNER_DESCRIPTION = "Operation to check if a user is an owner";
     public static final String USER_CONTROLLER_IS_OWNER_RESPONSE_200_DESCRIPTION = "User is an owner";
+    public static final String USER_CONTROLLER_LOGIN_SUMMARY = "Login User";
+    public static final String USER_CONTROLLER_LOGIN_DESCRIPTION = "Operation to login a user";
+    public static final String USER_CONTROLLER_LOGIN_RESPONSE_200_DESCRIPTION = "User logged in successfully";
+    public static final String USER_CONTROLLER_LOGIN_RESPONSE_400_DESCRIPTION = "Bad request, invalid input data";
 
 }
