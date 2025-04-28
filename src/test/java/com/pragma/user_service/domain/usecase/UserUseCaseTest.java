@@ -1,6 +1,7 @@
 package com.pragma.user_service.domain.usecase;
 
 import com.pragma.user_service.domain.api.IUserRoleServicePort;
+import com.pragma.user_service.domain.exception.ResourceConflictException;
 import com.pragma.user_service.domain.exception.InvalidDataException;
 import com.pragma.user_service.domain.model.Auth;
 import com.pragma.user_service.domain.model.User;
@@ -16,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -78,7 +80,7 @@ class UserUseCaseTest {
         when(userPersistencePort.existsByEmail(anyString())).thenReturn(true);
 
         // Act & Assert
-        Exception exception = assertThrows(InvalidDataException.class, () -> userUseCase.saveOwner(user));
+        Exception exception = assertThrows(ResourceConflictException.class, () -> userUseCase.saveOwner(user));
         assertEquals(UserValidationConstants.EMAIL_ALREADY_EXISTS, exception.getMessage());
 
         verify(userPersistencePort).existsByEmail(user.getEmail());
@@ -94,13 +96,65 @@ class UserUseCaseTest {
         when(userPersistencePort.existsByDni(anyString())).thenReturn(true);
 
         // Act & Assert
-        Exception exception = assertThrows(InvalidDataException.class, () -> userUseCase.saveOwner(user));
+        Exception exception = assertThrows(ResourceConflictException.class, () -> userUseCase.saveOwner(user));
+
         assertEquals(UserValidationConstants.DNI_ALREADY_EXISTS, exception.getMessage());
 
         verify(userPersistencePort).existsByEmail(user.getEmail());
         verify(userPersistencePort).existsByDni(user.getDni());
         verify(userRoleServicePort, never()).getRoleByName(anyString());
         verify(userPersistencePort, never()).saveUser(any(User.class));
+    }
+
+    @Test
+    void isOwner_withOwnerUser_shouldReturnTrue() {
+        // Arrange
+        Long userId = 1L;
+        User owner = new User();
+        owner.setRole(userRole); // userRole ya está configurado como ROLE_OWNER en setUp
+
+        when(userPersistencePort.findById(userId)).thenReturn(Optional.of(owner));
+
+        // Act
+        boolean result = userUseCase.isOwner(userId);
+
+        // Assert
+        assertTrue(result);
+        verify(userPersistencePort).findById(userId);
+    }
+
+    @Test
+    void isOwner_withNonOwnerUser_shouldReturnFalse() {
+        // Arrange
+        Long userId = 1L;
+        User nonOwnerUser = new User();
+        UserRole clientRole = new UserRole();
+        clientRole.setId(2L);
+        clientRole.setName("CLIENT");
+        nonOwnerUser.setRole(clientRole);
+
+        when(userPersistencePort.findById(userId)).thenReturn(Optional.of(nonOwnerUser));
+
+        // Act
+        boolean result = userUseCase.isOwner(userId);
+
+        // Assert
+        assertFalse(result);
+        verify(userPersistencePort).findById(userId);
+    }
+
+    @Test
+    void isOwner_withNonExistentUser_shouldReturnFalse() {
+        // Arrange
+        Long userId = 999L;
+        when(userPersistencePort.findById(userId)).thenReturn(Optional.empty());
+
+        // Act
+        boolean result = userUseCase.isOwner(userId);
+
+        // Assert
+        assertFalse(result);
+        verify(userPersistencePort).findById(userId);
     }
 
     @Test

@@ -41,6 +41,19 @@ class UserControllerTest {
     }
 
     @Test
+    void isOwner_ShouldReturnOkStatusWithResult() {
+        Long userId = 1L;
+        boolean isOwnerResult = true;
+        when(userHandler.isOwner(userId)).thenReturn(isOwnerResult);
+
+        ResponseEntity<Boolean> response = userController.isOwner(userId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(isOwnerResult, response.getBody());
+        verify(userHandler).isOwner(userId);
+    }
+  
+    @Test
     void login_ShouldReturnOkStatusAndAuthObject() {
         // Arrange
         LoginRequestDto loginRequestDto = new LoginRequestDto();

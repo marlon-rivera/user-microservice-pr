@@ -22,6 +22,11 @@ public class UserHandlerImpl implements IUserHandler {
     }
 
     @Override
+    public boolean isOwner(Long userId) {
+        return userServicePort.isOwner(userId);
+    }
+  
+    @Override
     public Auth login(LoginRequestDto loginRequestDto) {
         return userServicePort.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
     }

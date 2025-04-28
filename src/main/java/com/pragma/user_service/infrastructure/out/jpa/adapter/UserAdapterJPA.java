@@ -37,6 +37,11 @@ public class UserAdapterJPA implements IUserPersistencePort {
     }
 
     @Override
+    public Optional<User> findById(Long id) {
+        return userEntityMapper.toOptionalUser(userRepository.findById(id));
+    }
+
+    @Override
     public Auth authenticateUser(String email, String password) {
         Optional<UserEntity> userEntityOptional = userRepository.findByEmail(email);
         if (userEntityOptional.isEmpty()) {
@@ -47,5 +52,4 @@ public class UserAdapterJPA implements IUserPersistencePort {
         String token = jwtPort.getToken(userEntity.getId().toString(), userEntity.getRole().getName());
         return new Auth(token);
     }
-
 }

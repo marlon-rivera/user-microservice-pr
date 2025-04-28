@@ -108,6 +108,30 @@ class UserAdapterJPATest {
     }
 
     @Test
+    void findById_ShouldReturnUser_WhenUserExists() {
+        Long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(java.util.Optional.of(userEntity));
+        when(userEntityMapper.toOptionalUser(java.util.Optional.of(userEntity))).thenReturn(java.util.Optional.of(user));
+
+        java.util.Optional<User> result = userAdapterJPA.findById(userId);
+
+        assertTrue(result.isPresent());
+        assertEquals(user, result.get());
+        verify(userRepository).findById(userId);
+    }
+
+    @Test
+    void findById_ShouldReturnEmpty_WhenUserDoesNotExist() {
+        Long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(java.util.Optional.empty());
+
+        java.util.Optional<User> result = userAdapterJPA.findById(userId);
+
+        assertFalse(result.isPresent());
+        verify(userRepository).findById(userId);
+    }
+
+    @Test
     void authenticateUser_ShouldReturnAuth_WhenCredentialsAreValid() {
         // Arrange
         String email = "test@example.com";
