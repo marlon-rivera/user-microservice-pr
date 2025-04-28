@@ -2,6 +2,8 @@ package com.pragma.user_service.domain.usecase;
 
 import com.pragma.user_service.domain.api.IUserRoleServicePort;
 import com.pragma.user_service.domain.api.IUserServicePort;
+import com.pragma.user_service.domain.exception.InvalidDataException;
+import com.pragma.user_service.domain.model.Auth;
 import com.pragma.user_service.domain.model.User;
 import com.pragma.user_service.domain.model.UserRole;
 import com.pragma.user_service.domain.spi.IUserPersistencePort;
@@ -20,10 +22,10 @@ public class UserUseCase implements IUserServicePort {
     private void saveUser(User user, String roleName) {
         UserValidator.validateUserData(user);
         if (userPersistencePort.existsByEmail(user.getEmail())) {
-            throw new IllegalArgumentException(UserValidationConstants.EMAIL_ALREADY_EXISTS);
+            throw new InvalidDataException(UserValidationConstants.EMAIL_ALREADY_EXISTS);
         }
         if (userPersistencePort.existsByDni(user.getDni())) {
-            throw new IllegalArgumentException(UserValidationConstants.DNI_ALREADY_EXISTS);
+            throw new InvalidDataException(UserValidationConstants.DNI_ALREADY_EXISTS);
         }
         UserRole userRole = userRoleServicePort.getRoleByName(roleName);
         user.setRole(userRole);
@@ -34,5 +36,14 @@ public class UserUseCase implements IUserServicePort {
     @Override
     public void saveOwner(User user) {
         saveUser(user, UserUseCaseConstants.ROLE_OWNER);
+    }
+
+    @Override
+    public Auth login(String email, String password) {
+        Auth auth = userPersistencePort.authenticateUser(email, password);
+        if (auth == null) {
+            throw new InvalidDataException(UserValidationConstants.INVALID_CREDENTIALS);
+        }
+        return auth;
     }
 }

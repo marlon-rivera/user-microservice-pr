@@ -11,6 +11,11 @@ public class UserControllerConstantsOpenApi {
     public static final String USER_CONTROLLER_SAVE_RESPONSE_201_DESCRIPTION = "User created successfully";
     public static final String USER_CONTROLLER_SAVE_RESPONSE_400_DESCRIPTION = "Bad request, invalid input data";
     public static final String USER_CONTROLLER_SAVE_RESPONSE_409_DESCRIPTION = "Conflict, user already exists";
+    public static final String USER_CONTROLLER_LOGIN_SUMMARY = "Login User";
+    public static final String USER_CONTROLLER_LOGIN_DESCRIPTION = "Operation to login a user";
+    public static final String USER_CONTROLLER_LOGIN_RESPONSE_200_DESCRIPTION = "User logged in successfully";
+    public static final String USER_CONTROLLER_LOGIN_RESPONSE_400_DESCRIPTION = "Bad request, invalid input data";
+
 
 
 }

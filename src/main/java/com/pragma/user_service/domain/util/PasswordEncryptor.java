@@ -13,4 +13,7 @@ public class PasswordEncryptor {
     public static String encryptPassword(String password) {
         return passwordEncoder.encode(password);
     }
+    public static boolean matches(String rawPassword, String encodedPassword) {
+        return passwordEncoder.matches(rawPassword, encodedPassword);
+    }
 }
