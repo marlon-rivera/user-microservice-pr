@@ -1,7 +1,11 @@
 package com.pragma.user_service.infrastructure.out.jpa.adapter;
 
+import com.pragma.user_service.domain.model.Auth;
 import com.pragma.user_service.domain.model.User;
+import com.pragma.user_service.domain.spi.IAuthenticatePort;
+import com.pragma.user_service.domain.spi.IJWTPort;
 import com.pragma.user_service.infrastructure.out.jpa.entity.UserEntity;
+import com.pragma.user_service.infrastructure.out.jpa.entity.UserRoleEntity;
 import com.pragma.user_service.infrastructure.out.jpa.mapper.IUserEntityMapper;
 import com.pragma.user_service.infrastructure.out.jpa.repository.IUserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
@@ -26,6 +32,12 @@ class UserAdapterJPATest {
 
     @InjectMocks
     private UserAdapterJPA userAdapterJPA;
+
+    @Mock
+    private IJWTPort jwtPort;
+
+    @Mock
+    private IAuthenticatePort authenticatePort;
 
     private User user;
     private UserEntity userEntity;
@@ -95,4 +107,69 @@ class UserAdapterJPATest {
         verify(userRepository).existsByDni(dni);
     }
 
+    @Test
+    void findById_ShouldReturnUser_WhenUserExists() {
+        Long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(java.util.Optional.of(userEntity));
+        when(userEntityMapper.toOptionalUser(java.util.Optional.of(userEntity))).thenReturn(java.util.Optional.of(user));
+
+        java.util.Optional<User> result = userAdapterJPA.findById(userId);
+
+        assertTrue(result.isPresent());
+        assertEquals(user, result.get());
+        verify(userRepository).findById(userId);
+    }
+
+    @Test
+    void findById_ShouldReturnEmpty_WhenUserDoesNotExist() {
+        Long userId = 1L;
+        when(userRepository.findById(userId)).thenReturn(java.util.Optional.empty());
+
+        java.util.Optional<User> result = userAdapterJPA.findById(userId);
+
+        assertFalse(result.isPresent());
+        verify(userRepository).findById(userId);
+    }
+
+    @Test
+    void authenticateUser_ShouldReturnAuth_WhenCredentialsAreValid() {
+        // Arrange
+        String email = "test@example.com";
+        String password = "password";
+        String userId = "1";
+        String roleName = "USER";
+        String token = "jwt-token";
+
+        userEntity.setId(1L);
+        userEntity.setRole(new UserRoleEntity(1L, roleName, null));
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.of(userEntity));
+        when(jwtPort.getToken(userId, roleName)).thenReturn(token);
+
+        // Act
+        Auth result = userAdapterJPA.authenticateUser(email, password);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(token, result.getToken());
+        verify(userRepository).findByEmail(email);
+        verify(authenticatePort).authenticateUser(userId, password);
+        verify(jwtPort).getToken(userId, roleName);
+    }
+
+    @Test
+    void authenticateUser_ShouldReturnNull_WhenUserDoesNotExist() {
+        // Arrange
+        String email = "nonexistent@example.com";
+        String password = "password";
+
+        when(userRepository.findByEmail(email)).thenReturn(Optional.empty());
+
+        // Act
+        Auth result = userAdapterJPA.authenticateUser(email, password);
+
+        // Assert
+        assertNull(result);
+        verify(userRepository).findByEmail(email);
+    }
 }
