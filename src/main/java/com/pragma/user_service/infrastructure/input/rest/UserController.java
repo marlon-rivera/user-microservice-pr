@@ -68,7 +68,7 @@ public class UserController {
             description = UserControllerConstantsOpenApi.USER_CONTROLLER_LOGIN_DESCRIPTION,
             responses = {
                     @ApiResponse(
-                            responseCode = ResponsesCode.OK
+                            responseCode = ResponsesCodes.OK,
                             description = UserControllerConstantsOpenApi.USER_CONTROLLER_LOGIN_RESPONSE_200_DESCRIPTION
                     ),
                     @ApiResponse(

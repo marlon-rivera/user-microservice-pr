@@ -28,9 +28,6 @@ public class UserUseCase implements IUserServicePort {
         if (userPersistencePort.existsByDni(user.getDni())) {
             throw new ResourceConflictException(UserValidationConstants.DNI_ALREADY_EXISTS);
         }
-        if (userPersistencePort.existsByDni(user.getDni())) {
-            throw new ResourceConflictException(UserValidationConstants.DNI_ALREADY_EXISTS);
-        }
         UserRole userRole = userRoleServicePort.getRoleByName(roleName);
         user.setRole(userRole);
         user.setPassword(PasswordEncryptor.encryptPassword(user.getPassword()));
