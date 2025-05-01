@@ -1,6 +1,7 @@
 package com.pragma.user_service.infrastructure.input.rest;
 
 import com.pragma.user_service.application.dto.request.LoginRequestDto;
+import com.pragma.user_service.application.dto.request.UserClientRequestDto;
 import com.pragma.user_service.application.dto.request.UserEmployeeRequestDto;
 import com.pragma.user_service.application.dto.request.UserRequestDto;
 import com.pragma.user_service.application.dto.utils.constants.ResponsesCodes;
@@ -105,6 +106,30 @@ public class UserController {
     @PostMapping("/employee")
     public ResponseEntity<Void> createEmployee(@Valid @RequestBody UserEmployeeRequestDto userEmployeeRequestDto) {
         userHandler.saveEmployee(userEmployeeRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @Operation(
+            summary = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_CLIENT_SUMMARY,
+            description = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_CLIENT_DESCRIPTION,
+            responses = {
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.CREATED,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_CLIENT_RESPONSE_201_DESCRIPTION
+                    ),
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.BAD_REQUEST,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_CLIENT_RESPONSE_400_DESCRIPTION
+                    ),
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.CONFLICT,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_CLIENT_RESPONSE_409_DESCRIPTION
+                    )
+            }
+    )
+    @PostMapping("/client")
+    public ResponseEntity<Void> createClient(@Valid @RequestBody UserClientRequestDto userClientRequestDto) {
+        userHandler.saveClient(userClientRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

@@ -22,5 +22,10 @@ public class UserControllerConstantsOpenApi {
     public static final String USER_CONTROLLER_SAVE_EMPLOYEE_RESPONSE_201_DESCRIPTION = "Employee created successfully";
     public static final String USER_CONTROLLER_SAVE_EMPLOYEE_RESPONSE_400_DESCRIPTION = "Bad request, invalid input data";
     public static final String USER_CONTROLLER_SAVE_EMPLOYEE_RESPONSE_409_DESCRIPTION = "Conflict, employee already exists";
+    public static final String USER_CONTROLLER_SAVE_CLIENT_SUMMARY = "Save Client";
+    public static final String USER_CONTROLLER_SAVE_CLIENT_DESCRIPTION = "Operation to save a new client";
+    public static final String USER_CONTROLLER_SAVE_CLIENT_RESPONSE_201_DESCRIPTION = "Client created successfully";
+    public static final String USER_CONTROLLER_SAVE_CLIENT_RESPONSE_400_DESCRIPTION = "Bad request, invalid input data";
+    public static final String USER_CONTROLLER_SAVE_CLIENT_RESPONSE_409_DESCRIPTION = "Conflict, client already exists";
 
 }
