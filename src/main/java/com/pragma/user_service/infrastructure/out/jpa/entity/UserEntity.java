@@ -47,7 +47,7 @@ public class UserEntity implements UserDetails {
     private String phoneNumber;
     @Column(
             name = UserEntityConstants.DATE_OF_BIRTH_COLUMN,
-            nullable = false)
+            nullable = true)
     private String dateOfBirth;
     @Column(
             name = UserEntityConstants.EMAIL_COLUMN,

@@ -7,9 +7,10 @@ import java.util.Optional;
 
 public interface IUserPersistencePort {
 
-    void saveUser(User user);
+    User saveUser(User user);
     boolean existsByEmail(String email);
     boolean existsByDni(String dni);
     Optional<User> findById(Long id);
     Auth authenticateUser(String email, String password);
+    boolean validateOwnerRestaurant(Long restaurantId);
 }

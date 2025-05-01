@@ -1,6 +1,7 @@
 package com.pragma.user_service.infrastructure.input.rest;
 
 import com.pragma.user_service.application.dto.request.LoginRequestDto;
+import com.pragma.user_service.application.dto.request.UserEmployeeRequestDto;
 import com.pragma.user_service.application.dto.request.UserRequestDto;
 import com.pragma.user_service.application.handler.IUserHandler;
 import com.pragma.user_service.domain.model.Auth;
@@ -67,6 +68,18 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedAuth, response.getBody());
         verify(userHandler).login(loginRequestDto);
+    }
+
+    @Test
+    void createEmployee_ShouldReturnCreatedStatus() {
+        UserEmployeeRequestDto userEmployeeRequestDto = new UserEmployeeRequestDto();
+        doNothing().when(userHandler).saveEmployee(userEmployeeRequestDto);
+
+        ResponseEntity<Void> response = userController.createEmployee(userEmployeeRequestDto);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(userHandler).saveEmployee(userEmployeeRequestDto);
     }
 
 }

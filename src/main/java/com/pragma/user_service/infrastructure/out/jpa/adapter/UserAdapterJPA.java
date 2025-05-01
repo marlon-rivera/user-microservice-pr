@@ -4,6 +4,7 @@ import com.pragma.user_service.domain.model.Auth;
 import com.pragma.user_service.domain.model.User;
 import com.pragma.user_service.domain.spi.IAuthenticatePort;
 import com.pragma.user_service.domain.spi.IJWTPort;
+import com.pragma.user_service.domain.spi.IRestaurantPersistencePort;
 import com.pragma.user_service.domain.spi.IUserPersistencePort;
 import com.pragma.user_service.infrastructure.out.jpa.entity.UserEntity;
 import com.pragma.user_service.infrastructure.out.jpa.mapper.IUserEntityMapper;
@@ -19,11 +20,13 @@ public class UserAdapterJPA implements IUserPersistencePort {
     private final IUserEntityMapper userEntityMapper;
     private final IJWTPort jwtPort;
     private final IAuthenticatePort authenticatePort;
+    private final IRestaurantPersistencePort restaurantPersistencePort;
 
     @Override
-    public void saveUser(User user) {
+    public User saveUser(User user) {
         UserEntity userEntity = userEntityMapper.toUserEntity(user);
-        userRepository.save(userEntity);
+        UserEntity saved = userRepository.save(userEntity);
+        return userEntityMapper.toUser(saved);
     }
 
     @Override
@@ -51,5 +54,10 @@ public class UserAdapterJPA implements IUserPersistencePort {
         authenticatePort.authenticateUser(userEntity.getId().toString(), password);
         String token = jwtPort.getToken(userEntity.getId().toString(), userEntity.getRole().getName());
         return new Auth(token);
+    }
+
+    @Override
+    public boolean validateOwnerRestaurant(Long restaurantId) {
+        return restaurantPersistencePort.validateOwnerRestaurant(restaurantId);
     }
 }
