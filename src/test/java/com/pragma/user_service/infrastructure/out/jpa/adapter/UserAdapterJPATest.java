@@ -4,6 +4,7 @@ import com.pragma.user_service.domain.model.Auth;
 import com.pragma.user_service.domain.model.User;
 import com.pragma.user_service.domain.spi.IAuthenticatePort;
 import com.pragma.user_service.domain.spi.IJWTPort;
+import com.pragma.user_service.domain.spi.IRestaurantPersistencePort;
 import com.pragma.user_service.infrastructure.out.jpa.entity.UserEntity;
 import com.pragma.user_service.infrastructure.out.jpa.entity.UserRoleEntity;
 import com.pragma.user_service.infrastructure.out.jpa.mapper.IUserEntityMapper;
@@ -29,6 +30,9 @@ class UserAdapterJPATest {
 
     @Mock
     private IUserEntityMapper userEntityMapper;
+
+    @Mock
+    private IRestaurantPersistencePort restaurantPersistencePort;
 
     @InjectMocks
     private UserAdapterJPA userAdapterJPA;
@@ -171,5 +175,33 @@ class UserAdapterJPATest {
         // Assert
         assertNull(result);
         verify(userRepository).findByEmail(email);
+    }
+
+    @Test
+    void validateOwnerRestaurant_ShouldReturnTrue_WhenRestaurantBelongsToOwner() {
+        // Arrange
+        Long restaurantId = 1L;
+        when(restaurantPersistencePort.validateOwnerRestaurant(restaurantId)).thenReturn(true);
+
+        // Act
+        boolean result = userAdapterJPA.validateOwnerRestaurant(restaurantId);
+
+        // Assert
+        assertTrue(result);
+        verify(restaurantPersistencePort).validateOwnerRestaurant(restaurantId);
+    }
+
+    @Test
+    void validateOwnerRestaurant_ShouldReturnFalse_WhenRestaurantDoesNotBelongToOwner() {
+        // Arrange
+        Long restaurantId = 1L;
+        when(restaurantPersistencePort.validateOwnerRestaurant(restaurantId)).thenReturn(false);
+
+        // Act
+        boolean result = userAdapterJPA.validateOwnerRestaurant(restaurantId);
+
+        // Assert
+        assertFalse(result);
+        verify(restaurantPersistencePort).validateOwnerRestaurant(restaurantId);
     }
 }

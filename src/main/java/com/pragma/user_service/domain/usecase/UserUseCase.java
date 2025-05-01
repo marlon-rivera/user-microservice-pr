@@ -4,9 +4,8 @@ import com.pragma.user_service.domain.api.IUserRoleServicePort;
 import com.pragma.user_service.domain.api.IUserServicePort;
 import com.pragma.user_service.domain.exception.ResourceConflictException;
 import com.pragma.user_service.domain.exception.InvalidDataException;
-import com.pragma.user_service.domain.model.Auth;
-import com.pragma.user_service.domain.model.User;
-import com.pragma.user_service.domain.model.UserRole;
+import com.pragma.user_service.domain.model.*;
+import com.pragma.user_service.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.pragma.user_service.domain.spi.IUserPersistencePort;
 import com.pragma.user_service.domain.util.PasswordEncryptor;
 import com.pragma.user_service.domain.util.constants.UserUseCaseConstants;
@@ -19,8 +18,12 @@ public class UserUseCase implements IUserServicePort {
 
     private final IUserPersistencePort userPersistencePort;
     private final IUserRoleServicePort userRoleServicePort;
+    private final IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
 
-    private void saveUser(User user, String roleName) {
+
+    private User saveUser(User user, String roleName) {
+        UserRole userRole = userRoleServicePort.getRoleByName(roleName);
+        user.setRole(userRole);
         UserValidator.validateUserData(user);
         if (userPersistencePort.existsByEmail(user.getEmail())) {
             throw new ResourceConflictException(UserValidationConstants.EMAIL_ALREADY_EXISTS);
@@ -28,10 +31,8 @@ public class UserUseCase implements IUserServicePort {
         if (userPersistencePort.existsByDni(user.getDni())) {
             throw new ResourceConflictException(UserValidationConstants.DNI_ALREADY_EXISTS);
         }
-        UserRole userRole = userRoleServicePort.getRoleByName(roleName);
-        user.setRole(userRole);
         user.setPassword(PasswordEncryptor.encryptPassword(user.getPassword()));
-        userPersistencePort.saveUser(user);
+        return userPersistencePort.saveUser(user);
     }
 
     @Override
@@ -53,5 +54,20 @@ public class UserUseCase implements IUserServicePort {
             throw new InvalidDataException(UserValidationConstants.INVALID_CREDENTIALS);
         }
         return auth;
+    }
+
+    @Override
+    public void saveEmployee(User user, Long restaurantId) {
+        boolean validOwner = userPersistencePort.validateOwnerRestaurant(restaurantId);
+        if (!validOwner) {
+            throw new InvalidDataException(UserUseCaseConstants.INVALID_OWNER_RESTAURANT);
+        }
+        User userSaved = saveUser(user, UserUseCaseConstants.ROLE_EMPLOYEE);
+        saveEmployeeRestaurant(userSaved.getId(), restaurantId);
+    }
+
+    private void saveEmployeeRestaurant(Long idUser, Long restaurantId) {
+        EmployeeRestaurant employeeRestaurant = new EmployeeRestaurant(new EmployeeRestaurantId(idUser, restaurantId));
+        employeeRestaurantPersistencePort.saveEmployeeRestaurant(employeeRestaurant);
     }
 }

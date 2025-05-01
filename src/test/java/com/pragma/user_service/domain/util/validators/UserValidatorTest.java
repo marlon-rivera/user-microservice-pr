@@ -2,6 +2,7 @@ package com.pragma.user_service.domain.util.validators;
 
 import com.pragma.user_service.domain.exception.InvalidDataException;
 import com.pragma.user_service.domain.model.User;
+import com.pragma.user_service.domain.model.UserRole;
 import com.pragma.user_service.domain.util.constants.UserValidationConstants;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,6 +25,7 @@ class UserValidatorTest {
                 .phoneNumber("+573001234567")
                 .password("Password123*")
                 .dateOfBirth(LocalDate.now().minusYears(20))
+                .role(new UserRole(1L,"EMPLOYEE"))
                 .build();
 
         assertDoesNotThrow(() -> UserValidator.validateUserData(user));
@@ -153,6 +155,7 @@ class UserValidatorTest {
     void validAge_WithNullDateOfBirth_ShouldThrowException() {
         User user = createValidUser();
         user.setDateOfBirth(null);
+        user.setRole(new UserRole(1L,"OWNER"));
 
         InvalidDataException exception = assertThrows(InvalidDataException.class,
                 () -> UserValidator.validateUserData(user));
@@ -164,7 +167,7 @@ class UserValidatorTest {
     void validAge_WithDateOfBirthTooRecent_ShouldThrowException() {
         User user = createValidUser();
         user.setDateOfBirth(LocalDate.now().minusYears(UserValidationConstants.MINIMUM_AGE - 1));
-
+        user.setRole(new UserRole(1L,"OWNER"));
         InvalidDataException exception = assertThrows(InvalidDataException.class,
                 () -> UserValidator.validateUserData(user));
 

@@ -1,6 +1,7 @@
 package com.pragma.user_service.application.handler.impl;
 
 import com.pragma.user_service.application.dto.request.LoginRequestDto;
+import com.pragma.user_service.application.dto.request.UserEmployeeRequestDto;
 import com.pragma.user_service.application.dto.request.UserRequestDto;
 import com.pragma.user_service.application.handler.IUserHandler;
 import com.pragma.user_service.application.mapper.IUserRequestMapper;
@@ -29,5 +30,10 @@ public class UserHandlerImpl implements IUserHandler {
     @Override
     public Auth login(LoginRequestDto loginRequestDto) {
         return userServicePort.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
+    }
+
+    @Override
+    public void saveEmployee(UserEmployeeRequestDto userEmployeeRequestDto) {
+        userServicePort.saveEmployee(userRequestMapper.toUser(userEmployeeRequestDto), userEmployeeRequestDto.getRestaurantId());
     }
 }
