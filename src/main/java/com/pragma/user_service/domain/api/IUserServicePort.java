@@ -9,4 +9,5 @@ public interface IUserServicePort {
     boolean isOwner(Long userId);
     Auth login(String email, String password);
     void saveEmployee(User user, Long restaurantId);
+    void saveClient(User user);
 }

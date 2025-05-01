@@ -69,7 +69,7 @@ public class UserValidator {
     }
 
     private static void validAge(LocalDate dateOfBirth, String role){
-        if(role.equals(UserValidationConstants.ROLE_EMPLOYEE)){
+        if(role.equals(UserValidationConstants.ROLE_EMPLOYEE) || role.equals(UserValidationConstants.ROLE_CLIENT)){
             return;
         }
         if(dateOfBirth == null){

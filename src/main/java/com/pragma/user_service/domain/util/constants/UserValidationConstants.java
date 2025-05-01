@@ -25,5 +25,6 @@ public class UserValidationConstants {
     public static final int MINIMUM_AGE = 18;
     public static final String INVALID_CREDENTIALS = "Invalid credentials";
     public static final String ROLE_EMPLOYEE = "EMPLOYEE";
+    public static final String ROLE_CLIENT = "CLIENT";
 
 }

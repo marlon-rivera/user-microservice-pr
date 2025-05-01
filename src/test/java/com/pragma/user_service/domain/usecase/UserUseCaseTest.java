@@ -263,4 +263,66 @@ class UserUseCaseTest {
         verify(employeeRestaurantPersistencePort, never()).saveEmployeeRestaurant(any(EmployeeRestaurant.class));
     }
 
+    @Test
+    void saveClient_withValidData_shouldSaveUser() {
+        // Arrange
+        UserRole clientRole = new UserRole();
+        clientRole.setId(4L);
+        clientRole.setName(UserUseCaseConstants.ROLE_CLIENT);
+
+        when(userPersistencePort.existsByEmail(anyString())).thenReturn(false);
+        when(userPersistencePort.existsByDni(anyString())).thenReturn(false);
+        when(userRoleServicePort.getRoleByName(UserUseCaseConstants.ROLE_CLIENT)).thenReturn(clientRole);
+        when(userPersistencePort.saveUser(any(User.class))).thenReturn(user);
+
+        // Act
+        assertDoesNotThrow(() -> userUseCase.saveClient(user));
+
+        // Assert
+        verify(userPersistencePort).existsByEmail(user.getEmail());
+        verify(userPersistencePort).existsByDni(user.getDni());
+        verify(userRoleServicePort).getRoleByName(UserUseCaseConstants.ROLE_CLIENT);
+        verify(userPersistencePort).saveUser(user);
+        assertEquals(clientRole, user.getRole());
+        assertNotEquals("Password123*%", user.getPassword(), "La contraseña debe ser encriptada");
+    }
+
+    @Test
+    void saveClient_withExistingEmail_shouldThrowException() {
+        // Arrange
+        UserRole clientRole = new UserRole();
+        clientRole.setId(4L);
+        clientRole.setName(UserUseCaseConstants.ROLE_CLIENT);
+
+        when(userPersistencePort.existsByEmail(anyString())).thenReturn(true);
+        when(userRoleServicePort.getRoleByName(UserUseCaseConstants.ROLE_CLIENT)).thenReturn(clientRole);
+
+        // Act & Assert
+        Exception exception = assertThrows(ResourceConflictException.class, () -> userUseCase.saveClient(user));
+        assertEquals(UserValidationConstants.EMAIL_ALREADY_EXISTS, exception.getMessage());
+
+        verify(userPersistencePort).existsByEmail(user.getEmail());
+        verify(userPersistencePort, never()).existsByDni(anyString());
+        verify(userPersistencePort, never()).saveUser(any(User.class));
+    }
+
+    @Test
+    void saveClient_withExistingDni_shouldThrowException() {
+        // Arrange
+        UserRole clientRole = new UserRole();
+        clientRole.setId(4L);
+        clientRole.setName(UserUseCaseConstants.ROLE_CLIENT);
+
+        when(userPersistencePort.existsByEmail(anyString())).thenReturn(false);
+        when(userPersistencePort.existsByDni(anyString())).thenReturn(true);
+        when(userRoleServicePort.getRoleByName(UserUseCaseConstants.ROLE_CLIENT)).thenReturn(clientRole);
+
+        // Act & Assert
+        Exception exception = assertThrows(ResourceConflictException.class, () -> userUseCase.saveClient(user));
+        assertEquals(UserValidationConstants.DNI_ALREADY_EXISTS, exception.getMessage());
+
+        verify(userPersistencePort).existsByEmail(user.getEmail());
+        verify(userPersistencePort).existsByDni(user.getDni());
+        verify(userPersistencePort, never()).saveUser(any(User.class));
+    }
 }

@@ -66,6 +66,11 @@ public class UserUseCase implements IUserServicePort {
         saveEmployeeRestaurant(userSaved.getId(), restaurantId);
     }
 
+    @Override
+    public void saveClient(User user) {
+        saveUser(user, UserUseCaseConstants.ROLE_CLIENT);
+    }
+
     private void saveEmployeeRestaurant(Long idUser, Long restaurantId) {
         EmployeeRestaurant employeeRestaurant = new EmployeeRestaurant(new EmployeeRestaurantId(idUser, restaurantId));
         employeeRestaurantPersistencePort.saveEmployeeRestaurant(employeeRestaurant);
