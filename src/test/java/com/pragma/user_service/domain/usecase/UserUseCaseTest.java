@@ -4,8 +4,10 @@ import com.pragma.user_service.domain.api.IUserRoleServicePort;
 import com.pragma.user_service.domain.exception.ResourceConflictException;
 import com.pragma.user_service.domain.exception.InvalidDataException;
 import com.pragma.user_service.domain.model.Auth;
+import com.pragma.user_service.domain.model.EmployeeRestaurant;
 import com.pragma.user_service.domain.model.User;
 import com.pragma.user_service.domain.model.UserRole;
+import com.pragma.user_service.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.pragma.user_service.domain.spi.IUserPersistencePort;
 import com.pragma.user_service.domain.util.constants.UserUseCaseConstants;
 import com.pragma.user_service.domain.util.constants.UserValidationConstants;
@@ -32,6 +34,9 @@ class UserUseCaseTest {
     @Mock
     private IUserRoleServicePort userRoleServicePort;
 
+    @Mock
+    private IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
+
     @InjectMocks
     private UserUseCase userUseCase;
 
@@ -52,6 +57,7 @@ class UserUseCaseTest {
         userRole = new UserRole();
         userRole.setId(1L);
         userRole.setName(UserUseCaseConstants.ROLE_OWNER);
+        user.setRole(userRole);
     }
 
     @Test
@@ -60,7 +66,8 @@ class UserUseCaseTest {
         when(userPersistencePort.existsByEmail(anyString())).thenReturn(false);
         when(userPersistencePort.existsByDni(anyString())).thenReturn(false);
         when(userRoleServicePort.getRoleByName(UserUseCaseConstants.ROLE_OWNER)).thenReturn(userRole);
-        doNothing().when(userPersistencePort).saveUser(any(User.class));
+        when(userPersistencePort.saveUser(any(User.class))).thenReturn(user);
+        user.setRole(userRole);
 
         // Act
         assertDoesNotThrow(() -> userUseCase.saveOwner(user));
@@ -78,14 +85,13 @@ class UserUseCaseTest {
     void saveOwner_withExistingEmail_shouldThrowException() {
         // Arrange
         when(userPersistencePort.existsByEmail(anyString())).thenReturn(true);
-
+        when(userRoleServicePort.getRoleByName(UserUseCaseConstants.ROLE_OWNER)).thenReturn(userRole);
         // Act & Assert
         Exception exception = assertThrows(ResourceConflictException.class, () -> userUseCase.saveOwner(user));
         assertEquals(UserValidationConstants.EMAIL_ALREADY_EXISTS, exception.getMessage());
 
         verify(userPersistencePort).existsByEmail(user.getEmail());
         verify(userPersistencePort, never()).existsByDni(anyString());
-        verify(userRoleServicePort, never()).getRoleByName(anyString());
         verify(userPersistencePort, never()).saveUser(any(User.class));
     }
 
@@ -94,6 +100,7 @@ class UserUseCaseTest {
         // Arrange
         when(userPersistencePort.existsByEmail(anyString())).thenReturn(false);
         when(userPersistencePort.existsByDni(anyString())).thenReturn(true);
+        when(userRoleServicePort.getRoleByName(UserUseCaseConstants.ROLE_OWNER)).thenReturn(userRole);
 
         // Act & Assert
         Exception exception = assertThrows(ResourceConflictException.class, () -> userUseCase.saveOwner(user));
@@ -102,7 +109,6 @@ class UserUseCaseTest {
 
         verify(userPersistencePort).existsByEmail(user.getEmail());
         verify(userPersistencePort).existsByDni(user.getDni());
-        verify(userRoleServicePort, never()).getRoleByName(anyString());
         verify(userPersistencePort, never()).saveUser(any(User.class));
     }
 
@@ -187,6 +193,74 @@ class UserUseCaseTest {
                 () -> userUseCase.login(email, password));
         assertEquals(UserValidationConstants.INVALID_CREDENTIALS, exception.getMessage());
         verify(userPersistencePort).authenticateUser(email, password);
+    }
+
+    @Test
+    void saveEmployee_withValidData_shouldSaveUserAndEmployeeRestaurant() {
+        // Arrange
+        Long restaurantId = 1L;
+        UserRole employeeRole = new UserRole();
+        employeeRole.setId(3L);
+        employeeRole.setName(UserUseCaseConstants.ROLE_EMPLOYEE);
+
+        User savedUser = user;
+        savedUser.setId(1L);
+        savedUser.setRole(employeeRole);
+
+        when(userPersistencePort.validateOwnerRestaurant(restaurantId)).thenReturn(true);
+        when(userRoleServicePort.getRoleByName(UserUseCaseConstants.ROLE_EMPLOYEE)).thenReturn(employeeRole);
+        when(userPersistencePort.existsByEmail(anyString())).thenReturn(false);
+        when(userPersistencePort.existsByDni(anyString())).thenReturn(false);
+        when(userPersistencePort.saveUser(any(User.class))).thenReturn(savedUser);
+        doNothing().when(employeeRestaurantPersistencePort).saveEmployeeRestaurant(any(EmployeeRestaurant.class));
+
+        // Act
+        userUseCase.saveEmployee(user, restaurantId);
+
+        // Assert
+        verify(userPersistencePort).validateOwnerRestaurant(restaurantId);
+        verify(userRoleServicePort).getRoleByName(UserUseCaseConstants.ROLE_EMPLOYEE);
+        verify(userPersistencePort).existsByEmail(user.getEmail());
+        verify(userPersistencePort).existsByDni(user.getDni());
+        verify(userPersistencePort).saveUser(user);
+        verify(employeeRestaurantPersistencePort).saveEmployeeRestaurant(any(EmployeeRestaurant.class));
+    }
+
+    @Test
+    void saveEmployee_withInvalidRestaurantOwner_shouldThrowException() {
+        // Arrange
+        Long restaurantId = 1L;
+        when(userPersistencePort.validateOwnerRestaurant(restaurantId)).thenReturn(false);
+
+        // Act & Assert
+        Exception exception = assertThrows(InvalidDataException.class,
+                () -> userUseCase.saveEmployee(user, restaurantId));
+
+        assertEquals(UserUseCaseConstants.INVALID_OWNER_RESTAURANT, exception.getMessage());
+        verify(userPersistencePort).validateOwnerRestaurant(restaurantId);
+        verify(userRoleServicePort, never()).getRoleByName(anyString());
+        verify(userPersistencePort, never()).saveUser(any(User.class));
+        verify(employeeRestaurantPersistencePort, never()).saveEmployeeRestaurant(any(EmployeeRestaurant.class));
+    }
+
+    @Test
+    void saveEmployee_withExistingEmail_shouldThrowException() {
+        // Arrange
+        Long restaurantId = 1L;
+        when(userPersistencePort.validateOwnerRestaurant(restaurantId)).thenReturn(true);
+        when(userRoleServicePort.getRoleByName(UserUseCaseConstants.ROLE_EMPLOYEE)).thenReturn(new UserRole(1L, UserUseCaseConstants.ROLE_EMPLOYEE));
+        when(userPersistencePort.existsByEmail(anyString())).thenReturn(true);
+
+        // Act & Assert
+        Exception exception = assertThrows(ResourceConflictException.class,
+                () -> userUseCase.saveEmployee(user, restaurantId));
+
+        assertEquals(UserValidationConstants.EMAIL_ALREADY_EXISTS, exception.getMessage());
+        verify(userPersistencePort).validateOwnerRestaurant(restaurantId);
+        verify(userRoleServicePort).getRoleByName(UserUseCaseConstants.ROLE_EMPLOYEE);
+        verify(userPersistencePort).existsByEmail(user.getEmail());
+        verify(userPersistencePort, never()).saveUser(any(User.class));
+        verify(employeeRestaurantPersistencePort, never()).saveEmployeeRestaurant(any(EmployeeRestaurant.class));
     }
 
 }

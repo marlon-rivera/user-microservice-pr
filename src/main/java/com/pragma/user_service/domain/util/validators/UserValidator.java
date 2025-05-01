@@ -17,7 +17,7 @@ public class UserValidator {
         validEmail(user.getEmail());
         validPhoneNumber(user.getPhoneNumber());
         validPassword(user.getPassword());
-        validAge(user.getDateOfBirth());
+        validAge(user.getDateOfBirth(), user.getRole().getName());
     }
 
     private static void validName(String name){
@@ -68,7 +68,10 @@ public class UserValidator {
         }
     }
 
-    private static void validAge(LocalDate dateOfBirth){
+    private static void validAge(LocalDate dateOfBirth, String role){
+        if(role.equals(UserValidationConstants.ROLE_EMPLOYEE)){
+            return;
+        }
         if(dateOfBirth == null){
             throw new InvalidDataException(UserValidationConstants.DATE_OF_BIRTH_REQUIRED);
         }

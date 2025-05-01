@@ -16,4 +16,6 @@ public class UserRequestConstants {
     public static final String REGEX_PHONE_NUMBER = "^(\\+\\d{12}|57\\d{10}|\\d{10})$";
     public static final String REGEX_DNI = "^[0-9]{10}$";
     public static final String DATE_FORMAT = "yyyy-MM-dd";
+    public static final String ID_RESTAURANT_MUST_MANDATORY = "The restaurant id must be mandatory";
+
 }

@@ -33,6 +33,7 @@ public class SecurityConfig {
                                 auth
 
                                         .requestMatchers("/users").hasRole(RoleEnum.ADMIN.name())
+                                        .requestMatchers("/users/employee").hasRole(RoleEnum.OWNER.name())
                                         .requestMatchers("/users/login").permitAll()
                                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                                         .anyRequest().permitAll())

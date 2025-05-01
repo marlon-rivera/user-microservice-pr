@@ -1,6 +1,7 @@
 package com.pragma.user_service.infrastructure.input.rest;
 
 import com.pragma.user_service.application.dto.request.LoginRequestDto;
+import com.pragma.user_service.application.dto.request.UserEmployeeRequestDto;
 import com.pragma.user_service.application.dto.request.UserRequestDto;
 import com.pragma.user_service.application.dto.utils.constants.ResponsesCodes;
 import com.pragma.user_service.application.handler.IUserHandler;
@@ -68,7 +69,7 @@ public class UserController {
             description = UserControllerConstantsOpenApi.USER_CONTROLLER_LOGIN_DESCRIPTION,
             responses = {
                     @ApiResponse(
-                            responseCode = ResponsesCode.OK
+                            responseCode = ResponsesCodes.OK,
                             description = UserControllerConstantsOpenApi.USER_CONTROLLER_LOGIN_RESPONSE_200_DESCRIPTION
                     ),
                     @ApiResponse(
@@ -82,4 +83,29 @@ public class UserController {
         Auth auth = userHandler.login(loginRequestDto);
         return ResponseEntity.ok(auth);
     }
+
+    @Operation(
+            summary = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_EMPLOYEE_SUMMARY,
+            description = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_EMPLOYEE_DESCRIPTION,
+            responses = {
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.CREATED,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_EMPLOYEE_RESPONSE_201_DESCRIPTION
+                    ),
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.BAD_REQUEST,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_EMPLOYEE_RESPONSE_400_DESCRIPTION
+                    ),
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.CONFLICT,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_SAVE_EMPLOYEE_RESPONSE_409_DESCRIPTION
+                    )
+            }
+    )
+    @PostMapping("/employee")
+    public ResponseEntity<Void> createEmployee(@Valid @RequestBody UserEmployeeRequestDto userEmployeeRequestDto) {
+        userHandler.saveEmployee(userEmployeeRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }
