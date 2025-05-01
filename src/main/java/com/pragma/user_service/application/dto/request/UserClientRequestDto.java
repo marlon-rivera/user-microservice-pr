@@ -1,21 +1,18 @@
 package com.pragma.user_service.application.dto.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.pragma.user_service.application.dto.utils.constants.UserRequestConstants;
 import com.pragma.user_service.application.dto.utils.constants.UserRequestConstantsOpenApi;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
-@Schema(
-        description = UserRequestConstantsOpenApi.USER_DESCRIPTION
-)
-public class UserRequestDto {
+public class UserClientRequestDto {
 
     @Schema(
             description = UserRequestConstantsOpenApi.USER_NAME_DESCRIPTION,
@@ -43,15 +40,7 @@ public class UserRequestDto {
     )
     @NotBlank(message = UserRequestConstants.PHONE_NUMBER_MUST_MANDATORY)
     @Pattern(regexp = UserRequestConstants.REGEX_PHONE_NUMBER)
-
     private String phoneNumber;
-    @Schema(
-            description = UserRequestConstantsOpenApi.USER_DATE_OF_BIRTH_DESCRIPTION,
-            example = UserRequestConstantsOpenApi.USER_DATE_OF_BIRTH_EXAMPLE
-    )
-    @NotNull(message = UserRequestConstants.DATE_OF_BIRTH_MUST_MANDATORY)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = UserRequestConstants.DATE_FORMAT)
-    private LocalDate dateOfBirth;
     @Schema(
             description = UserRequestConstantsOpenApi.USER_EMAIL_DESCRIPTION,
             example = UserRequestConstantsOpenApi.USER_EMAIL_EXAMPLE
@@ -65,4 +54,5 @@ public class UserRequestDto {
     )
     @NotBlank(message = UserRequestConstants.PASSWORD_MUST_MANDATORY)
     private String password;
+
 }

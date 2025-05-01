@@ -1,5 +1,6 @@
 package com.pragma.user_service.application.mapper;
 
+import com.pragma.user_service.application.dto.request.UserClientRequestDto;
 import com.pragma.user_service.application.dto.request.UserEmployeeRequestDto;
 import com.pragma.user_service.application.dto.request.UserRequestDto;
 import com.pragma.user_service.domain.model.User;
@@ -17,5 +18,10 @@ public interface IUserRequestMapper {
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "dateOfBirth", ignore = true)
     User toUser(UserEmployeeRequestDto userEmployeeRequestDto);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "dateOfBirth", ignore = true)
+    User toUser(UserClientRequestDto userClientRequestDto);
 
 }

@@ -1,6 +1,7 @@
 package com.pragma.user_service.infrastructure.input.rest;
 
 import com.pragma.user_service.application.dto.request.LoginRequestDto;
+import com.pragma.user_service.application.dto.request.UserClientRequestDto;
 import com.pragma.user_service.application.dto.request.UserEmployeeRequestDto;
 import com.pragma.user_service.application.dto.request.UserRequestDto;
 import com.pragma.user_service.application.handler.IUserHandler;
@@ -80,6 +81,18 @@ class UserControllerTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNull(response.getBody());
         verify(userHandler).saveEmployee(userEmployeeRequestDto);
+    }
+
+    @Test
+    void createClient_ShouldReturnCreatedStatus() {
+        UserClientRequestDto userClientRequestDto = new UserClientRequestDto();
+        doNothing().when(userHandler).saveClient(userClientRequestDto);
+
+        ResponseEntity<Void> response = userController.createClient(userClientRequestDto);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNull(response.getBody());
+        verify(userHandler).saveClient(userClientRequestDto);
     }
 
 }
