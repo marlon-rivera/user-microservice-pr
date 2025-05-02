@@ -133,4 +133,23 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(
+            summary = UserControllerConstantsOpenApi.USER_CONTROLLER_GET_ID_RESTAURANT_BY_ID_EMPLOYEE_SUMMARY,
+            description = UserControllerConstantsOpenApi.USER_CONTROLLER_GET_ID_RESTAURANT_BY_ID_EMPLOYEE_DESCRIPTION,
+            responses = {
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.OK,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_GET_ID_RESTAURANT_BY_ID_EMPLOYEE_RESPONSE_200_DESCRIPTION
+                    ),
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.BAD_REQUEST,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_GET_ID_RESTAURANT_BY_ID_EMPLOYEE_RESPONSE_400_DESCRIPTION
+                    )
+            }
+    )
+    @GetMapping("/restaurant/employee")
+    public ResponseEntity<Long> getIdRestaurantByIdEmployee() {
+        Long idRestaurant = userHandler.getIdRestaurantByIdEmployee();
+        return ResponseEntity.ok(idRestaurant);
+    }
 }
