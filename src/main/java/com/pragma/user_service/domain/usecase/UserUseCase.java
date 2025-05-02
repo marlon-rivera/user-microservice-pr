@@ -5,6 +5,7 @@ import com.pragma.user_service.domain.api.IUserServicePort;
 import com.pragma.user_service.domain.exception.ResourceConflictException;
 import com.pragma.user_service.domain.exception.InvalidDataException;
 import com.pragma.user_service.domain.model.*;
+import com.pragma.user_service.domain.spi.IAuthenticatePort;
 import com.pragma.user_service.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.pragma.user_service.domain.spi.IUserPersistencePort;
 import com.pragma.user_service.domain.util.PasswordEncryptor;
@@ -13,12 +14,15 @@ import com.pragma.user_service.domain.util.constants.UserValidationConstants;
 import com.pragma.user_service.domain.util.validators.UserValidator;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 public class UserUseCase implements IUserServicePort {
 
     private final IUserPersistencePort userPersistencePort;
     private final IUserRoleServicePort userRoleServicePort;
     private final IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
+    private final IAuthenticatePort authenticatePort;
 
 
     private User saveUser(User user, String roleName) {
@@ -69,6 +73,16 @@ public class UserUseCase implements IUserServicePort {
     @Override
     public void saveClient(User user) {
         saveUser(user, UserUseCaseConstants.ROLE_CLIENT);
+    }
+
+    @Override
+    public Long getIdRestaurantByIdEmployee() {
+        Long idEmployee = authenticatePort.getCurrentUserId();
+        Optional<EmployeeRestaurant> employeeRestaurant = employeeRestaurantPersistencePort.getEmployeeRestaurantByIdEmployee(idEmployee);
+        if (employeeRestaurant.isEmpty()) {
+            throw new InvalidDataException(UserUseCaseConstants.EMPLOYEE_RESTAURANT_NOT_FOUND);
+        }
+        return employeeRestaurant.get().getEmployeeRestaurantId().getRestaurantId();
     }
 
     private void saveEmployeeRestaurant(Long idUser, Long restaurantId) {

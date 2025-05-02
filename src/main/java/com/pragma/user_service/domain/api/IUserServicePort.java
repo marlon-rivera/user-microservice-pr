@@ -10,4 +10,5 @@ public interface IUserServicePort {
     Auth login(String email, String password);
     void saveEmployee(User user, Long restaurantId);
     void saveClient(User user);
+    Long getIdRestaurantByIdEmployee();
 }

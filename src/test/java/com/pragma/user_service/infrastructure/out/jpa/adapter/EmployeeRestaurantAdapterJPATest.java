@@ -12,6 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -51,5 +55,42 @@ class EmployeeRestaurantAdapterJPATest {
         verify(employeeRestaurantRepository).save(employeeRestaurantEntity);
     }
 
+    @Test
+    void getEmployeeRestaurantByIdEmployee_ShouldReturnEmployeeRestaurant() {
+        // Arrange
+        Long employeeId = 1L;
+        Optional<EmployeeRestaurantEntity> optionalEmployeeRestaurantEntity = Optional.of(employeeRestaurantEntity);
+        Optional<EmployeeRestaurant> expectedEmployeeRestaurant = Optional.of(employeeRestaurant);
+
+        when(employeeRestaurantRepository.findByEmployeeId(employeeId)).thenReturn(optionalEmployeeRestaurantEntity);
+        when(employeeRestaurantEntityMapper.toOptionalDomain(optionalEmployeeRestaurantEntity)).thenReturn(expectedEmployeeRestaurant);
+
+        // Act
+        Optional<EmployeeRestaurant> result = employeeRestaurantAdapterJPA.getEmployeeRestaurantByIdEmployee(employeeId);
+
+        // Assert
+        assertEquals(expectedEmployeeRestaurant, result);
+        verify(employeeRestaurantRepository).findByEmployeeId(employeeId);
+        verify(employeeRestaurantEntityMapper).toOptionalDomain(optionalEmployeeRestaurantEntity);
+    }
+
+    @Test
+    void getEmployeeRestaurantByIdEmployee_WhenNotFound_ShouldReturnEmptyOptional() {
+        // Arrange
+        Long employeeId = 999L;
+        Optional<EmployeeRestaurantEntity> emptyOptionalEntity = Optional.empty();
+        Optional<EmployeeRestaurant> emptyOptionalDomain = Optional.empty();
+
+        when(employeeRestaurantRepository.findByEmployeeId(employeeId)).thenReturn(emptyOptionalEntity);
+        when(employeeRestaurantEntityMapper.toOptionalDomain(emptyOptionalEntity)).thenReturn(emptyOptionalDomain);
+
+        // Act
+        Optional<EmployeeRestaurant> result = employeeRestaurantAdapterJPA.getEmployeeRestaurantByIdEmployee(employeeId);
+
+        // Assert
+        assertTrue(result.isEmpty());
+        verify(employeeRestaurantRepository).findByEmployeeId(employeeId);
+        verify(employeeRestaurantEntityMapper).toOptionalDomain(emptyOptionalEntity);
+    }
 
 }
