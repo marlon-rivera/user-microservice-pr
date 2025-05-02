@@ -3,10 +3,8 @@ package com.pragma.user_service.domain.usecase;
 import com.pragma.user_service.domain.api.IUserRoleServicePort;
 import com.pragma.user_service.domain.exception.ResourceConflictException;
 import com.pragma.user_service.domain.exception.InvalidDataException;
-import com.pragma.user_service.domain.model.Auth;
-import com.pragma.user_service.domain.model.EmployeeRestaurant;
-import com.pragma.user_service.domain.model.User;
-import com.pragma.user_service.domain.model.UserRole;
+import com.pragma.user_service.domain.model.*;
+import com.pragma.user_service.domain.spi.IAuthenticatePort;
 import com.pragma.user_service.domain.spi.IEmployeeRestaurantPersistencePort;
 import com.pragma.user_service.domain.spi.IUserPersistencePort;
 import com.pragma.user_service.domain.util.constants.UserUseCaseConstants;
@@ -36,6 +34,9 @@ class UserUseCaseTest {
 
     @Mock
     private IEmployeeRestaurantPersistencePort employeeRestaurantPersistencePort;
+
+    @Mock
+    private IAuthenticatePort authenticatePort;
 
     @InjectMocks
     private UserUseCase userUseCase;
@@ -324,5 +325,45 @@ class UserUseCaseTest {
         verify(userPersistencePort).existsByEmail(user.getEmail());
         verify(userPersistencePort).existsByDni(user.getDni());
         verify(userPersistencePort, never()).saveUser(any(User.class));
+    }
+
+    @Test
+    void getIdRestaurantByIdEmployee_whenEmployeeFound_shouldReturnRestaurantId() {
+        // Arrange
+        Long employeeId = 1L;
+        Long expectedRestaurantId = 2L;
+
+        EmployeeRestaurantId employeeRestaurantId = new EmployeeRestaurantId(employeeId, expectedRestaurantId);
+        EmployeeRestaurant employeeRestaurant = new EmployeeRestaurant(employeeRestaurantId);
+
+        when(authenticatePort.getCurrentUserId()).thenReturn(employeeId);
+        when(employeeRestaurantPersistencePort.getEmployeeRestaurantByIdEmployee(employeeId))
+                .thenReturn(Optional.of(employeeRestaurant));
+
+        // Act
+        Long result = userUseCase.getIdRestaurantByIdEmployee();
+
+        // Assert
+        assertEquals(expectedRestaurantId, result);
+        verify(authenticatePort).getCurrentUserId();
+        verify(employeeRestaurantPersistencePort).getEmployeeRestaurantByIdEmployee(employeeId);
+    }
+
+    @Test
+    void getIdRestaurantByIdEmployee_whenEmployeeNotFound_shouldThrowException() {
+        // Arrange
+        Long employeeId = 1L;
+
+        when(authenticatePort.getCurrentUserId()).thenReturn(employeeId);
+        when(employeeRestaurantPersistencePort.getEmployeeRestaurantByIdEmployee(employeeId))
+                .thenReturn(Optional.empty());
+
+        // Act & Assert
+        Exception exception = assertThrows(InvalidDataException.class,
+                () -> userUseCase.getIdRestaurantByIdEmployee());
+
+        assertEquals(UserUseCaseConstants.EMPLOYEE_RESTAURANT_NOT_FOUND, exception.getMessage());
+        verify(authenticatePort).getCurrentUserId();
+        verify(employeeRestaurantPersistencePort).getEmployeeRestaurantByIdEmployee(employeeId);
     }
 }

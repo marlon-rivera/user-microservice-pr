@@ -95,4 +95,18 @@ class UserControllerTest {
         verify(userHandler).saveClient(userClientRequestDto);
     }
 
+    @Test
+    void getIdRestaurantByIdEmployee_ShouldReturnOkStatusWithRestaurantId() {
+        // Arrange
+        Long expectedRestaurantId = 123L;
+        when(userHandler.getIdRestaurantByIdEmployee()).thenReturn(expectedRestaurantId);
+
+        // Act
+        ResponseEntity<Long> response = userController.getIdRestaurantByIdEmployee();
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedRestaurantId, response.getBody());
+        verify(userHandler).getIdRestaurantByIdEmployee();
+    }
 }

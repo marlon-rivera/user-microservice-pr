@@ -42,4 +42,9 @@ public class UserHandlerImpl implements IUserHandler {
     public void saveClient(UserClientRequestDto userClientRequestDto) {
         userServicePort.saveClient(userRequestMapper.toUser(userClientRequestDto));
     }
+
+    @Override
+    public Long getIdRestaurantByIdEmployee() {
+        return userServicePort.getIdRestaurantByIdEmployee();
+    }
 }

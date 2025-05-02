@@ -75,7 +75,7 @@ public class BeanConfiguration {
 
     @Bean
     public IUserServicePort userServicePort() {
-        return new UserUseCase(userPersistencePort(), userRoleServicePort(), employeeRestaurantPersistencePort());
+        return new UserUseCase(userPersistencePort(), userRoleServicePort(), employeeRestaurantPersistencePort(), authenticatePort());
     }
 
     @Bean

@@ -13,4 +13,5 @@ public interface IUserHandler {
     Auth login(LoginRequestDto loginRequestDto);
     void saveEmployee(UserEmployeeRequestDto userEmployeeRequestDto);
     void saveClient(UserClientRequestDto userClientRequestDto);
+    Long getIdRestaurantByIdEmployee();
 }

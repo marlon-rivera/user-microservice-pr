@@ -5,6 +5,7 @@ import com.pragma.user_service.infrastructure.security.jwt.JWTAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -31,7 +32,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         auth ->
                                 auth
-
+                                        .requestMatchers(HttpMethod.GET, "/users/restaurant/employee").hasRole(RoleEnum.EMPLOYEE.name())
                                         .requestMatchers("/users").hasRole(RoleEnum.ADMIN.name())
                                         .requestMatchers("/users/employee").hasRole(RoleEnum.OWNER.name())
                                         .requestMatchers("/users/login").permitAll()
