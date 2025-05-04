@@ -31,6 +31,9 @@ public class UserControllerConstantsOpenApi {
     public static final String USER_CONTROLLER_GET_ID_RESTAURANT_BY_ID_EMPLOYEE_DESCRIPTION = "Operation to get restaurant ID by employee ID";
     public static final String USER_CONTROLLER_GET_ID_RESTAURANT_BY_ID_EMPLOYEE_RESPONSE_200_DESCRIPTION = "Restaurant ID retrieved successfully";
     public static final String USER_CONTROLLER_GET_ID_RESTAURANT_BY_ID_EMPLOYEE_RESPONSE_400_DESCRIPTION = "Bad request, invalid input data";
-
+    public static final String USER_CONTROLLER_GET_PHONE_NUMBER_BY_ID_CLIENT_SUMMARY = "Get Phone Number by Client ID";
+    public static final String USER_CONTROLLER_GET_PHONE_NUMBER_BY_ID_CLIENT_DESCRIPTION = "Operation to get phone number by client ID";
+    public static final String USER_CONTROLLER_GET_PHONE_NUMBER_BY_ID_CLIENT_RESPONSE_200_DESCRIPTION = "Phone number retrieved successfully";
+    public static final String USER_CONTROLLER_GET_PHONE_NUMBER_BY_ID_CLIENT_RESPONSE_404_DESCRIPTION = "Not found, client not found";
 
 }

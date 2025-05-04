@@ -152,4 +152,24 @@ public class UserController {
         Long idRestaurant = userHandler.getIdRestaurantByIdEmployee();
         return ResponseEntity.ok(idRestaurant);
     }
+
+    @Operation(
+            summary = UserControllerConstantsOpenApi.USER_CONTROLLER_GET_PHONE_NUMBER_BY_ID_CLIENT_SUMMARY,
+            description = UserControllerConstantsOpenApi.USER_CONTROLLER_GET_PHONE_NUMBER_BY_ID_CLIENT_DESCRIPTION,
+            responses = {
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.OK,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_GET_PHONE_NUMBER_BY_ID_CLIENT_RESPONSE_200_DESCRIPTION
+                    ),
+                    @ApiResponse(
+                            responseCode = ResponsesCodes.NOT_FOUND,
+                            description = UserControllerConstantsOpenApi.USER_CONTROLLER_GET_PHONE_NUMBER_BY_ID_CLIENT_RESPONSE_404_DESCRIPTION
+                    )
+            }
+    )
+    @GetMapping("/client-phone/{id}")
+    public ResponseEntity<String> getPhoneNumberByIdClient(@PathVariable Long id) {
+        String phoneNumber = userHandler.getNumberPhoneByIdClient(id);
+        return ResponseEntity.ok(phoneNumber);
+    }
 }

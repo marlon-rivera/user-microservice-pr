@@ -109,4 +109,20 @@ class UserControllerTest {
         assertEquals(expectedRestaurantId, response.getBody());
         verify(userHandler).getIdRestaurantByIdEmployee();
     }
+
+    @Test
+    void getNumberPhoneByIdClient_ShouldReturnOkStatusWithPhoneNumber() {
+        // Arrange
+        Long clientId = 1L;
+        String expectedPhoneNumber = "1234567890";
+        when(userHandler.getNumberPhoneByIdClient(clientId)).thenReturn(expectedPhoneNumber);
+
+        // Act
+        ResponseEntity<String> response = userController.getPhoneNumberByIdClient(clientId);
+
+        // Assert
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedPhoneNumber, response.getBody());
+        verify(userHandler).getNumberPhoneByIdClient(clientId);
+    }
 }
