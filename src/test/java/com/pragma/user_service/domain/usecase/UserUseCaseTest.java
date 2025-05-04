@@ -366,4 +366,39 @@ class UserUseCaseTest {
         verify(authenticatePort).getCurrentUserId();
         verify(employeeRestaurantPersistencePort).getEmployeeRestaurantByIdEmployee(employeeId);
     }
+
+    @Test
+    void getPhoneNumberByIdClient_whenClientExists_shouldReturnPhoneNumber() {
+        // Arrange
+        Long clientId = 1L;
+        String expectedPhoneNumber = "+573001234567";
+
+        User client = new User();
+        client.setId(clientId);
+        client.setPhoneNumber(expectedPhoneNumber);
+
+        when(userPersistencePort.findById(clientId)).thenReturn(Optional.of(client));
+
+        // Act
+        String result = userUseCase.getPhoneNumberByIdClient(clientId);
+
+        // Assert
+        assertEquals(expectedPhoneNumber, result);
+        verify(userPersistencePort).findById(clientId);
+    }
+
+    @Test
+    void getPhoneNumberByIdClient_whenClientNotFound_shouldThrowException() {
+        // Arrange
+        Long nonExistentClientId = 999L;
+
+        when(userPersistencePort.findById(nonExistentClientId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        Exception exception = assertThrows(InvalidDataException.class,
+                () -> userUseCase.getPhoneNumberByIdClient(nonExistentClientId));
+
+        assertEquals(UserUseCaseConstants.CLIENT_NOT_FOUND, exception.getMessage());
+        verify(userPersistencePort).findById(nonExistentClientId);
+    }
 }

@@ -47,4 +47,9 @@ public class UserHandlerImpl implements IUserHandler {
     public Long getIdRestaurantByIdEmployee() {
         return userServicePort.getIdRestaurantByIdEmployee();
     }
+
+    @Override
+    public String getNumberPhoneByIdClient(Long idClient) {
+        return userServicePort.getPhoneNumberByIdClient(idClient);
+    }
 }
