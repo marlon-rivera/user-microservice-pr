@@ -85,6 +85,15 @@ public class UserUseCase implements IUserServicePort {
         return employeeRestaurant.get().getEmployeeRestaurantId().getRestaurantId();
     }
 
+    @Override
+    public String getPhoneNumberByIdClient(Long clientId) {
+        Optional<User> user = userPersistencePort.findById(clientId);
+        if (user.isEmpty()) {
+            throw new InvalidDataException(UserUseCaseConstants.CLIENT_NOT_FOUND);
+        }
+        return user.get().getPhoneNumber();
+    }
+
     private void saveEmployeeRestaurant(Long idUser, Long restaurantId) {
         EmployeeRestaurant employeeRestaurant = new EmployeeRestaurant(new EmployeeRestaurantId(idUser, restaurantId));
         employeeRestaurantPersistencePort.saveEmployeeRestaurant(employeeRestaurant);

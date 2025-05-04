@@ -14,4 +14,5 @@ public interface IUserHandler {
     void saveEmployee(UserEmployeeRequestDto userEmployeeRequestDto);
     void saveClient(UserClientRequestDto userClientRequestDto);
     Long getIdRestaurantByIdEmployee();
+    String getNumberPhoneByIdClient(Long idClient);
 }
